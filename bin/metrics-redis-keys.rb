@@ -2,7 +2,7 @@
 # frozen_string_literal: false
 
 #
-# Get the length of a list and push it to graphite
+# Get the number of keys and push it to graphite
 #
 #
 #
@@ -13,7 +13,7 @@ require 'sensu-plugin/metric/cli'
 require 'redis'
 require_relative '../lib/redis_client_options'
 
-class RedisListLengthMetric < Sensu::Plugin::Metric::CLI::Graphite
+class RedisKeysNumberMetric < Sensu::Plugin::Metric::CLI::Graphite
   include RedisClientOptions
 
   option :scheme,
@@ -22,19 +22,24 @@ class RedisListLengthMetric < Sensu::Plugin::Metric::CLI::Graphite
          long: '--scheme SCHEME',
          default: "#{Socket.gethostname}.redis"
 
-  option :key,
-         short: '-k KEY1,KEY2',
-         long: '--key KEY',
-         description: 'Comma separated list of keys to check',
-         required: true
+  option :metricname,
+         short: '-M METRICNAME',
+         long: '--metric-name METRICNAME',
+         description: 'Name of the metric key. Defaults to "keys"',
+         required: false,
+         default: 'keys'
+
+  option :pattern,
+         long: '--pattern PATTERN',
+         description: 'Argument passed into keys command. Defaults to *',
+         required: false,
+         default: '*'
 
   def run
     redis = Redis.new(default_redis_options)
 
-    redis_keys = config[:key].split(',')
-    redis_keys.each do |key|
-      output "#{config[:scheme]}.#{key}.items", redis.llen(key)
-    end
+    output "#{config[:scheme]}.#{config[:metricname]}", redis.keys(config[:pattern]).size
+
     ok
   rescue StandardError
     send(config[:conn_failure_status], "Could not connect to Redis server on #{redis_endpoint}")

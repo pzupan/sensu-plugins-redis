@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module SensuPluginsRedis
   module Version
-    MAJOR = 3
+    MAJOR = 4
     MINOR = 1
-    PATCH = 1
+    PATCH = 0
 
     VER_STRING = [MAJOR, MINOR, PATCH].compact.join('.')
   end
