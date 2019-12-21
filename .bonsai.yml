@@ -1,7 +1,7 @@
 ---
 description: "#{repo}"
 overrides:
-- readme_url: "https://github.com/jspaleta/sensu-plugins-redis/blob/master/README.md"
+- readme_url: "https://raw.githubusercontent.com/jspaleta/sensu-plugins-redis/master/README.md"
 builds:
 - platform: "alpine"
   arch: "amd64"
